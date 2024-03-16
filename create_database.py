@@ -4,8 +4,10 @@ from langchain.embeddings import CohereEmbeddings
 from langchain.vectorstores.chroma import Chroma
 import os
 import shutil
+from dotenv import dotenv_values
 
 
+env_vars = dotenv_values(".env")
 CHROMA_PATH = "chroma"
 DATA_PATH = "data/books"
 
@@ -45,7 +47,7 @@ def split_text(docs):
 
 
 def save_to_chroma(chunks):
-    embeddings = CohereEmbeddings(cohere_api_key="")
+    embeddings = CohereEmbeddings(cohere_api_key=env_vars.get("COHERE_API_KEY"))
     if os.path.exists(CHROMA_PATH):
         shutil.rmtree(CHROMA_PATH)
     db = Chroma.from_documents(

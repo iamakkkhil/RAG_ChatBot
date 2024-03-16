@@ -3,6 +3,9 @@ from langchain.vectorstores.chroma import Chroma
 from langchain.embeddings import CohereEmbeddings
 from langchain.chat_models import ChatCohere
 from langchain.prompts import ChatPromptTemplate
+from dotenv import dotenv_values
+
+env_vars = dotenv_values(".env")
 
 CHROMA_PATH = "chroma"
 
@@ -25,7 +28,7 @@ def main():
     query_text = args.query_text
 
     # Prepare the DB.
-    embedding_function = CohereEmbeddings(cohere_api_key="")
+    embedding_function = CohereEmbeddings(cohere_api_key=env_vars.get("COHERE_API_KEY"))
     db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
 
     # Search the DB.
@@ -38,7 +41,7 @@ def main():
     prompt = prompt_template.format(context=context_text, question=query_text)
     print(prompt)
 
-    model = ChatCohere(cohere_api_key="")
+    model = ChatCohere(cohere_api_key=env_vars.get("COHERE_API_KEY"))
     response_text = model.predict(prompt)
 
     sources = [doc.metadata.get("source", None) for doc, _score in results]
